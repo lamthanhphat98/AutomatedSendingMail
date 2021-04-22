@@ -43,6 +43,7 @@ namespace AutomatedSendingMail
             var mainFolder = "DuLieuMail";
             var keeperFolder = "DuLieuGuiDi";
             var errorUser = string.Empty;
+            var listErrorUser = new List<string>();
 
 
             try
@@ -87,6 +88,19 @@ namespace AutomatedSendingMail
                                         var ws = pck.Workbook.Worksheets["Sheet1"];
                                         var firstElement = listGroupSubItem.FirstOrDefault();
                                         errorUser = firstElement.UserCode;
+
+                                        var mailReceiver = new List<string>();
+                                        if (!String.IsNullOrEmpty(firstElement.Mail))
+                                        {
+                                            if (firstElement.Mail.Contains(@"/"))
+                                            {
+                                                mailReceiver.AddRange(firstElement.Mail.Split(@"/").ToList());
+                                            }
+                                            else
+                                            {
+                                                mailReceiver.Add(firstElement.Mail);
+                                            }
+                                        }
                                         Console.WriteLine("Tiến hành xử lý mã " + errorUser);
                                         ws.Cells["G11"].Value = firstElement.UserCode;
                                         ws.Cells["B12"].Value = firstElement.UserCode;
@@ -185,6 +199,8 @@ namespace AutomatedSendingMail
                                 catch (Exception)
                                 {
                                     Console.WriteLine("Lỗi ở khách hàng " + errorUser);
+                                    listErrorUser.Add(errorUser);
+
                                 }
                             }
                         }
@@ -192,14 +208,25 @@ namespace AutomatedSendingMail
                 }
 
 
+                if (listErrorUser.Any())
+                {
+                    Console.WriteLine("Đang tiến hành ghi dữ liệu lỗi");
+                    var errorMsg = String.Empty;
+                    foreach (var item in listErrorUser)
+                    {
+                        errorMsg += item + "-";
+                    }
+                    var errorPathFile = String.Format("{0}" + "{1}", path, "ErrorLog.txt");
+                    File.WriteAllText(errorPathFile, errorMsg);
+                    Console.WriteLine("Ghi dữ liệu lỗi xong");
+                }
                 Console.WriteLine("Chương trình đã chạy xong");
                 Console.ReadKey();
             }
             catch (Exception ex)
             {
+
             }
-
-
 
         }
         static List<string> GetAllAttachmentFile(string folderPath)
