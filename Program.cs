@@ -48,13 +48,13 @@ namespace AutomatedSendingMail
 
             try
             {
-                Console.WriteLine("Vui lòng nhập email : ");
-                var mailSender = Console.ReadLine();
-                Console.WriteLine("Vui lòng nhập password : ");
-                var password = Console.ReadLine();
-                Console.WriteLine("Vui lòng nhập Subject Mail : ");
-                var mailSubject = Console.ReadLine();
-                Console.WriteLine("Dữ liệu đang được xử lý, vui lòng đợi cho đến khi kết thúc và không tắt chương trình. ");
+                //Console.WriteLine("Vui lòng nhập email : ");
+                //var mailSender = Console.ReadLine();
+                //Console.WriteLine("Vui lòng nhập password : ");
+                //var password = Console.ReadLine();
+                //Console.WriteLine("Vui lòng nhập Subject Mail : ");
+                //var mailSubject = Console.ReadLine();
+                //Console.WriteLine("Dữ liệu đang được xử lý, vui lòng đợi cho đến khi kết thúc và không tắt chương trình. ");
 
                 #region ExcelData
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -177,7 +177,7 @@ namespace AutomatedSendingMail
                                         #region Mail Sender
                                         var mailModel = new SendEmailModel();
                                         mailModel.ListToEmails = new List<string>();
-                                        mailModel.ListToEmails.Add("lamthanhphat98@gmail.com");
+                                        mailModel.ListToEmails.AddRange(mailReceiver);
                                         mailModel.AttachmentFullPath = new List<string>();
                                         mailModel.AttachmentFullPath.Add(savePath);
 
