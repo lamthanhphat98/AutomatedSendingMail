@@ -44,7 +44,7 @@ namespace AutomatedSendingMail
             var keeperFolder = "DuLieuGuiDi";
             var errorUser = string.Empty;
             var listErrorUser = new List<string>();
-
+            var errorPathFileTryCatch = string.Empty;
 
             try
             {
@@ -66,6 +66,7 @@ namespace AutomatedSendingMail
                 //var fileBody = new FileInfo(String.Format("{0}" + "{1}", path, mailBody));
                 var mailDataBody = File.ReadAllText(String.Format("{0}" + "{1}", path, mailBody), Encoding.UTF8);
                 var streamData = new StreamReader(String.Format("{0}" + "{1}", path, fileData));
+                errorPathFileTryCatch = String.Format("{0}" + "{1}", path, "ErrorLogFunction.txt");
                 var data = ExcelToListData(streamData.BaseStream);
                 var pathAttachFolder = path + attachFolder + @"\" + attachmentAll;
                 var listAttachment = GetAllAttachmentFile(pathAttachFolder);
@@ -196,11 +197,10 @@ namespace AutomatedSendingMail
                                         #endregion
                                     }
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
                                     Console.WriteLine("Lỗi ở khách hàng " + errorUser);
                                     listErrorUser.Add(errorUser);
-
                                 }
                             }
                         }
@@ -225,15 +225,19 @@ namespace AutomatedSendingMail
             }
             catch (Exception ex)
             {
-
+                File.WriteAllText(errorPathFileTryCatch, ex.Message);
             }
 
         }
         static List<string> GetAllAttachmentFile(string folderPath)
         {
-            List<string> filePaths = Directory.GetFiles(folderPath, "*",
-                                         SearchOption.TopDirectoryOnly).ToList();
-            return filePaths;
+            if (Directory.Exists(folderPath))
+            {
+                List<string> filePaths = Directory.GetFiles(folderPath, "*",
+                                                         SearchOption.TopDirectoryOnly).ToList();
+                return filePaths;
+            }
+            return new List<string>();
         }
         static List<ExcelDataVinaSun> ExcelToListData(Stream dataStream)
         {
